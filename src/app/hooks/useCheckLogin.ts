@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import AccountStateStore from "../store/AccountStateStore";
 import { useRouter } from "next/navigation";
+import { useLoading } from "../context/LoadingContext";
 
 const useCheckLogin = () => {
   const {
@@ -13,6 +14,8 @@ const useCheckLogin = () => {
   } = AccountStateStore;
 
   const router = useRouter();
+
+  const { openLoading } = useLoading();
 
   // useEffect
   useEffect(() => {
@@ -74,6 +77,9 @@ const useCheckLogin = () => {
             sessionStorage.removeItem("my-account");
             logout();
             router.push("/");
+
+            openLoading();
+            document.body.classList.add("whiteDim");
 
             return Promise.reject(error);
           }
