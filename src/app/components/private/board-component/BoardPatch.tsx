@@ -1,16 +1,13 @@
-import React from "react";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
-  SheetTrigger,
-} from "../../ui/sheet";
-import { Label } from "../../ui/label";
-import { Input } from "../../ui/input";
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
 import BoardStore from "@/app/store/BoardStore";
 import axios from "axios";
 import { observer } from "mobx-react-lite";
+import useLoadBoards from "@/app/hooks/useLoadBoards";
+import { Button } from "../../ui/button";
+import PatchPopOver from "./PatchPopOver";
+import CategoryStore from "@/app/store/CategoryStore";
+import useLoadAllBoards from "@/app/hooks/useLoadAllBoards";
 
 type Board = {
   id: number;
@@ -21,24 +18,103 @@ type Board = {
 };
 
 function BoardPatch() {
-  const { boardData } = BoardStore;
+  const {
+    boardData,
+    allFilteredData,
+    changeBoardData,
+    changeFilteredBoardData,
+    changeTotalElements,
+    changeAllFilteredData,
+    totalElements,
+  } = BoardStore;
 
-  const isAnyChecked = boardData.some((item) => item.isChecked);
+  const { category } = CategoryStore;
+
+  const isAnyChecked =
+    (category === "전체 분류" && boardData.some((item) => item.isChecked)) ||
+    (category !== "전체 분류" &&
+      allFilteredData.some((item) => item.isChecked));
+
+  const deletes = async () => {
+    const imported = sessionStorage.getItem("my-account");
+    let parsed = null;
+
+    if (imported) {
+      parsed = JSON.parse(imported);
+    }
+
+    // 1. Checked 된 Boards 가져오기
+    const boardsToDelete1 = boardData.filter((b: Board) => b.isChecked);
+    const boardsToDelete2 = allFilteredData.filter((b: Board) => b.isChecked);
+
+    // 2. 삭제 Promise 생성
+    const deletePromise1 = boardsToDelete1.map((b: Board) => {
+      axios.delete(`https://front-mission.bigs.or.kr/boards/${b.id}`, {
+        headers: { Authorization: `Bearer ${parsed.accessToken}` },
+      });
+    });
+
+    const deletePromise2 = boardsToDelete2.map((b: Board) => {
+      axios.delete(`https://front-mission.bigs.or.kr/boards/${b.id}`, {
+        headers: { Authorization: `Bearer ${parsed.accessToken}` },
+      });
+    });
+
+    try {
+      if (category === "전체 분류") {
+        const res1 = await Promise.all(deletePromise1);
+
+        // update UI
+        const remainingData1 = boardData.filter((b) => !b.isChecked);
+
+        changeBoardData(remainingData1);
+        changeFilteredBoardData(remainingData1);
+        changeTotalElements(totalElements - remainingData1.length);
+      } else {
+        const res2 = await Promise.all(deletePromise2);
+        const remainingData2 = allFilteredData.filter((b) => !b.isChecked);
+        changeAllFilteredData(remainingData2);
+        changeTotalElements(totalElements - remainingData2.length);
+      }
+
+      setDeleteOccured(true);
+    } catch (e) {}
+  };
+
+  const [deleteOccured, setDeleteOccured] = useState(false);
+  const [patchOn, setPatchOn] = useState(false);
+
+  useLoadBoards(deleteOccured && category === "전체 분류");
+
+  useLoadAllBoards(deleteOccured && category !== "전체 분류");
 
   return (
     <div
       id="board-patch-wrapper"
       className="flex items-center justify-center gap-[2rem] w-full mb-[3rem]"
     >
-      <button className="w-[160px] py-4 bg-black text-white pt-[1.4rem] text-[1.2rem] font-bold cursor-pointer">
-        수정하기
-      </button>
-      <button
-        className="w-[160px] py-4 bg-black text-white pt-[1.4rem] text-[1.2rem] font-bold cursor-pointer disabled:opacity-20"
+      <Button
+        className="w-[160px] h-full py-4 bg-black text-white pt-[1.4rem] text-[1.2rem] font-bold cursor-pointer disabled:opacity-20"
         disabled={!isAnyChecked}
+        onClick={() => {
+          setPatchOn(true);
+          document.body.classList.add("dimmed");
+        }}
+      >
+        수정하기
+      </Button>
+      {patchOn &&
+        ReactDOM.createPortal(
+          <PatchPopOver setPatchOn={setPatchOn} />,
+          document.body
+        )}
+      <Button
+        className="w-[160px] h-full py-4 bg-black text-white pt-[1.4rem] text-[1.2rem] font-bold cursor-pointer disabled:opacity-20"
+        disabled={!isAnyChecked}
+        onClick={deletes}
       >
         삭제하기
-      </button>
+      </Button>
     </div>
   );
 }

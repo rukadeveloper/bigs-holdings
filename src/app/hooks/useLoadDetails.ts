@@ -1,9 +1,19 @@
 import axios from "axios";
-import { ParamValue } from "next/dist/server/request/params";
 import { useEffect, useState } from "react";
+import { useLoading } from "../context/LoadingContext";
+import { ParamValue } from "next/dist/server/request/params";
 
-const useLoadDetails = (num: ParamValue) => {
-  const [data, setData] = useState({
+type Data = {
+  id: number;
+  title: string;
+  content: string;
+  boardCategory: string;
+  createdAt: string;
+  imageUrl: string | null;
+};
+
+const useLoadDetails = (num: string | number | ParamValue) => {
+  const [data, setData] = useState<Data>({
     id: 0,
     title: "",
     content: "",
@@ -12,6 +22,8 @@ const useLoadDetails = (num: ParamValue) => {
     imageUrl: null,
   });
 
+  const { openLoading, closeLoading } = useLoading();
+
   useEffect(() => {
     const imported = sessionStorage.getItem("my-account");
 
@@ -19,6 +31,8 @@ const useLoadDetails = (num: ParamValue) => {
       const parsed = JSON.parse(imported);
       const detailAxios = async () => {
         try {
+          openLoading();
+          document.body.classList.add("whiteDim");
           const res = await axios.get(
             `https://front-mission.bigs.or.kr/boards/${num}`,
             {
@@ -29,14 +43,18 @@ const useLoadDetails = (num: ParamValue) => {
           );
 
           setData(res.data);
-        } catch (e) {}
+        } catch (e) {
+        } finally {
+          closeLoading();
+          document.body.classList.remove("whiteDim");
+        }
       };
 
       detailAxios();
     }
   }, []);
 
-  return data;
+  return { data, setData };
 };
 
 export default useLoadDetails;

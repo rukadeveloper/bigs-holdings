@@ -89,7 +89,7 @@ body.whiteDim::after {
   left: 0;
   right: 0;
   background-color: rgba(255, 255, 255, 0.75);
-  z-index: 50;
+  z-index: 500;
 }
 
 :root {

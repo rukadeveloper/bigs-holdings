@@ -12,7 +12,7 @@ function BoardSelectAtom() {
   const { changeCategory, changeIsSelected } = CategoryStore;
 
   return (
-    <ul className="absolute top-[calc(100%_+_3px)] left-0 right-0 flex flex-col bg-white rounded-[0.25rem] border border-solid border-[rgba(0,0,0,.25)]">
+    <ul className="absolute top-[calc(100%_+_3px)] left-0 right-0 flex flex-col bg-white rounded-[0.25rem] border border-solid border-[rgba(0,0,0,.25)] z-[200]">
       {Object.entries(categories).map(([key, value]) => (
         <button
           key={key}

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import { FiChevronDown } from "react-icons/fi";
 import BoardSelectAtom from "./BoardSelectAtom";
@@ -8,7 +8,15 @@ import CategoryStore from "@/app/store/CategoryStore";
 import { observer } from "mobx-react-lite";
 
 function BoardSelector() {
-  const { isSelected, category, changeIsSelected } = CategoryStore;
+  const { isSelected, category, changeCategory, changeIsSelected } =
+    CategoryStore;
+
+  useEffect(() => {
+    return () => {
+      changeIsSelected(false);
+      changeCategory("분류 전체");
+    };
+  }, []);
 
   return (
     <div className="board_selector relative lg:w-auto w-1/2">

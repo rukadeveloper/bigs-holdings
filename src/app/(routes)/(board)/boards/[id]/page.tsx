@@ -18,7 +18,7 @@ type Data = {
 export default function DetailPage() {
   const { id } = useParams();
 
-  const data: Data = useLoadDetails(id);
+  const { data } = useLoadDetails(id);
 
   const router = useRouter();
 
@@ -27,16 +27,17 @@ export default function DetailPage() {
       {Object.keys(data).length !== 0 && (
         <>
           <span className="text-[1.1rem]">
-            {data.createdAt.split("T")[0]}
+            {data.createdAt && data.createdAt.split("T")[0]}
             <b className="pl-2 font-normal">
-              {data.createdAt.split("T")[1] &&
+              {data.createdAt &&
+                data.createdAt.split("T")[1] &&
                 data.createdAt.split("T")[1].split(".")[0]}
             </b>
           </span>
           <h2 className="pt-[1rem] font-bold text-[1.7rem] pb-[2.2rem] mb-[2.2rem] border-b border-solid border-black">
             {data.title}
           </h2>
-          <p className="h-[calc(100vh_-_800px)] border-b border-solid border-[rgba(0,0,0,.85)]">
+          <p className="h-[calc(100vh_-_600px)] border-b border-solid border-[rgba(0,0,0,.85)]">
             {data.content}
           </p>
           <div className="index-button">

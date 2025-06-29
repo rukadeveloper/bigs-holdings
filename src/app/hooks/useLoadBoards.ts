@@ -10,12 +10,12 @@ type Board = {
   isChecked: boolean;
 };
 
-const useLoadBoards = () => {
+const useLoadBoards = (flag: boolean) => {
   const [size] = useState(10);
 
   const {
     changeBoardData,
-    changeFilteredBoardData,
+    boardData,
     page,
     changeTotalPages,
     changeTotalElements,
@@ -44,16 +44,18 @@ const useLoadBoards = () => {
               mappingData.push({ ...c, isChecked: false });
             });
             changeBoardData(mappingData);
-            changeFilteredBoardData(mappingData);
             changeTotalPages(response.data.totalPages);
             changeTotalElements(response.data.totalElements);
+            console.log(boardData);
           }
         } catch (e) {}
       };
 
-      axiosBoard();
+      if (flag) {
+        axiosBoard();
+      }
     }
-  }, [page]);
+  }, [page, flag]);
 };
 
 export default useLoadBoards;
