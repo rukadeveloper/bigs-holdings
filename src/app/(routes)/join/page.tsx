@@ -44,9 +44,7 @@ function JoinPage() {
         router.push("/");
       }
     } catch (e: any) {
-      if (e.response.status !== 200) {
-        alert("이미 사용중인 사용자입니다.");
-      }
+      alert("이미 사용중인 사용자입니다.");
     }
   };
 

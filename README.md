@@ -1,36 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## 확인하실 때 참고 사항
 
-## Getting Started
+- 로그인과 회원가입, 게시글 기능을 구현하였습니다. 소요기간은 1주일이었습니다.
 
-First, run the development server:
+- 메인 페이지는 디자인적인 요소를 추가했습니다.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- 대부분 반응형으로 제작하였습니다.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- # 모달에 접속할 때 토큰 만료 오류가 날 경우 일부 디버깅이 부족하게 되어 있습니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- # 게시글에서 필터링 후 글을 수정하려고 하면, 바로 업데이트가 되지 않는 부분이 있습니다. (새로고침하면 업데이트 됩니다.)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- # 회원가입 시 이메일 주소를 클릭하면 제대로 disabled가 풀리지 않는 오류가 있습니다.
 
-## Learn More
+- # console.error 부분은 출력됩니다.
 
-To learn more about Next.js, take a look at the following resources:
+- 이 부분 이외에는 대부분 완전히 구현하였습니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 상태관리는 mobX를 스타일링은 TailwindCSS를 프레임워크는 Next.js를, 언어는 Typescript를 사용하였습니다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 아래 사항을 꼭 확인하시고 검사해주시길 부탁드립니다.
