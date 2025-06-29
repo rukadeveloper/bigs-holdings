@@ -17,6 +17,10 @@ class BoardStore {
   _allOriginalData: Board[] = [];
   _allFilteredData: Board[] = [];
   _checkedOn: boolean = false;
+  _boardOpen: boolean = false;
+  _boardAllOpen: boolean = false;
+  _patchOccur: boolean = false;
+  _deleteOccur: boolean = false;
 
   get boardData(): Board[] {
     return this._boardData;
@@ -50,6 +54,22 @@ class BoardStore {
     return this._checkedOn;
   }
 
+  get boardOpen(): boolean {
+    return this._boardOpen;
+  }
+
+  get boardAllOpen(): boolean {
+    return this._boardAllOpen;
+  }
+
+  get patchOccur(): boolean {
+    return this._patchOccur;
+  }
+
+  get deleteOccur(): boolean {
+    return this._deleteOccur;
+  }
+
   constructor() {
     makeObservable(this, {
       _boardData: observable,
@@ -60,6 +80,10 @@ class BoardStore {
       _allOriginalData: observable,
       _allFilteredData: observable,
       _checkedOn: observable,
+      _boardOpen: observable,
+      _boardAllOpen: observable,
+      _patchOccur: observable,
+      _deleteOccur: observable,
       boardData: computed,
       filteredBoardData: computed,
       page: computed,
@@ -68,6 +92,10 @@ class BoardStore {
       allOriginalData: computed,
       allFilteredData: computed,
       checkedOn: computed,
+      boardOpen: computed,
+      boardAllOpen: computed,
+      patchOccur: computed,
+      deleteOccur: computed,
       changeBoardData: action,
       changeFilteredBoardData: action,
       changePage: action,
@@ -76,6 +104,10 @@ class BoardStore {
       changeAllOriginalData: action,
       changeAllFilteredData: action,
       changeCheckedOn: action,
+      changeBoardOn: action,
+      changeBoardAllOpen: action,
+      changePatchOccur: action,
+      changeDeleteOccur: action,
     });
   }
 
@@ -109,6 +141,22 @@ class BoardStore {
 
   changeCheckedOn: (check: boolean) => void = (check: boolean) => {
     this._checkedOn = check;
+  };
+
+  changeBoardOn: (bos: boolean) => void = (bos: boolean) => {
+    this._boardOpen = bos;
+  };
+
+  changeBoardAllOpen: (bas: boolean) => void = (bas: boolean) => {
+    this._boardAllOpen = bas;
+  };
+
+  changePatchOccur: (poc: boolean) => void = (poc: boolean) => {
+    this._patchOccur = poc;
+  };
+
+  changeDeleteOccur: (doc: boolean) => void = (doc: boolean) => {
+    this._deleteOccur = doc;
   };
 }
 

@@ -11,7 +11,7 @@ function WriteButton() {
   return (
     <div className="write-button-wrapper w-full">
       <button
-        className="w-[250px] block mx-auto sm:mb-[2rem] mb-[5rem] sm:py-[2rem] py-[0.9rem] bg-[#1D31D9] text-white text-[1.2rem] font-bold disabled:opacity-20"
+        className="w-[250px] block mx-auto sm:mb-[2rem] mb-[5rem] sm:py-[2rem] py-[0.9rem] bg-[#1D31D9] text-white text-[1.2rem] font-bold disabled:opacity-20 cursor-pointer"
         disabled={categories === "선택하기" || !content || !title}
       >
         글 작성하기

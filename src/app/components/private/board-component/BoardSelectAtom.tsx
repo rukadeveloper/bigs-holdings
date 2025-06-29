@@ -5,9 +5,12 @@ import React, { Dispatch, SetStateAction } from "react";
 import useLoadCategory from "@/app/hooks/useLoadCategory";
 import CategoryStore from "@/app/store/CategoryStore";
 import { observer } from "mobx-react-lite";
+import BoardStore from "@/app/store/BoardStore";
 
 function BoardSelectAtom() {
   const categories = useLoadCategory();
+
+  const { changePage } = BoardStore;
 
   const { changeCategory, changeIsSelected } = CategoryStore;
 
@@ -19,6 +22,7 @@ function BoardSelectAtom() {
           className="py-4 px-3 text-left hover:bg-black hover:text-white"
           onClick={() => {
             changeCategory(key);
+            changePage(0);
             changeIsSelected(false);
           }}
         >

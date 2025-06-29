@@ -25,15 +25,23 @@ function BoardPatch() {
     changeFilteredBoardData,
     changeTotalElements,
     changeAllFilteredData,
+    changePatchOccur,
+    changeDeleteOccur,
     totalElements,
   } = BoardStore;
 
   const { category } = CategoryStore;
 
   const isAnyChecked =
-    (category === "전체 분류" && boardData.some((item) => item.isChecked)) ||
-    (category !== "전체 분류" &&
+    (category === "분류 전체" && boardData.some((item) => item.isChecked)) ||
+    (category !== "분류 전체" &&
       allFilteredData.some((item) => item.isChecked));
+
+  // 1. Checked 된 Boards 가져오기
+  const boardsToDeleteOrPatch1 = boardData.filter((b: Board) => b.isChecked);
+  const boardsToDeleteOrPatch2 = allFilteredData.filter(
+    (b: Board) => b.isChecked
+  );
 
   const deletes = async () => {
     const imported = sessionStorage.getItem("my-account");
@@ -43,25 +51,21 @@ function BoardPatch() {
       parsed = JSON.parse(imported);
     }
 
-    // 1. Checked 된 Boards 가져오기
-    const boardsToDelete1 = boardData.filter((b: Board) => b.isChecked);
-    const boardsToDelete2 = allFilteredData.filter((b: Board) => b.isChecked);
-
     // 2. 삭제 Promise 생성
-    const deletePromise1 = boardsToDelete1.map((b: Board) => {
+    const deletePromise1 = boardsToDeleteOrPatch1.map((b: Board) => {
       axios.delete(`https://front-mission.bigs.or.kr/boards/${b.id}`, {
         headers: { Authorization: `Bearer ${parsed.accessToken}` },
       });
     });
 
-    const deletePromise2 = boardsToDelete2.map((b: Board) => {
+    const deletePromise2 = boardsToDeleteOrPatch2.map((b: Board) => {
       axios.delete(`https://front-mission.bigs.or.kr/boards/${b.id}`, {
         headers: { Authorization: `Bearer ${parsed.accessToken}` },
       });
     });
 
     try {
-      if (category === "전체 분류") {
+      if (category === "분류 전체") {
         const res1 = await Promise.all(deletePromise1);
 
         // update UI
@@ -69,24 +73,20 @@ function BoardPatch() {
 
         changeBoardData(remainingData1);
         changeFilteredBoardData(remainingData1);
-        changeTotalElements(totalElements - remainingData1.length);
+        changeTotalElements(remainingData1.length);
       } else {
         const res2 = await Promise.all(deletePromise2);
+        console.log(res2);
         const remainingData2 = allFilteredData.filter((b) => !b.isChecked);
         changeAllFilteredData(remainingData2);
-        changeTotalElements(totalElements - remainingData2.length);
+        changeTotalElements(remainingData2.length);
       }
 
-      setDeleteOccured(true);
+      changeDeleteOccur(true);
     } catch (e) {}
   };
 
-  const [deleteOccured, setDeleteOccured] = useState(false);
   const [patchOn, setPatchOn] = useState(false);
-
-  useLoadBoards(deleteOccured && category === "전체 분류");
-
-  useLoadAllBoards(deleteOccured && category !== "전체 분류");
 
   return (
     <div

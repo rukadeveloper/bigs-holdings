@@ -31,7 +31,6 @@ const useCheckLogin = () => {
 
     const interceptor = axios.interceptors.response.use(
       (response) => {
-        console.log(response);
         return response;
       },
       async (error) => {

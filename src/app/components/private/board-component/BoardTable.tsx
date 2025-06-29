@@ -25,21 +25,27 @@ function BoardTable() {
     allFilteredData,
     page,
     changeBoardData,
+    deleteOccur,
+    patchOccur,
     allOriginalData,
     changeAllFilteredData,
     changeTotalElements,
     changeTotalPages,
+    boardOpen,
+    boardAllOpen,
   } = BoardStore;
 
   const { category } = CategoryStore;
 
-  useEffect(() => {
-    console.log(category);
-  }, [category]);
+  useLoadBoards(
+    category === "분류 전체",
+    boardOpen || patchOccur || deleteOccur
+  );
 
-  useLoadBoards(category === "분류 전체");
-
-  useLoadAllBoards(category !== "분류 전체");
+  useLoadAllBoards(
+    category !== "분류 전체",
+    boardAllOpen || patchOccur || deleteOccur
+  );
 
   useEffect(() => {
     if (category !== "분류 전체") {
@@ -51,6 +57,10 @@ function BoardTable() {
       changeTotalPages(Math.ceil(filtered.length / 10));
     }
   }, [category, allOriginalData]);
+
+  useEffect(() => {
+    console.log(toJS(observable(allFilteredData)));
+  }, [allFilteredData]);
 
   return (
     <RadioGroup>

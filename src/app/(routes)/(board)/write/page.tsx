@@ -16,8 +16,12 @@ import WriteInputFullWrapper from "@/app/components/private/write-form-input/Wri
 import WriteButton from "@/app/components/private/write-form-input/WriteButton";
 import WriteFileWrapper from "@/app/components/private/write-form-input/WriteFileWrapper";
 import WriteFormSelectWrapper from "@/app/components/private/write-form-selector/WriteFormSelectWrapper";
+import { useRouter } from "next/navigation";
+import { useLoading } from "@/app/context/LoadingContext";
+import RedirectComp from "@/app/components/shared/redirect/RedirectComp";
 
 function WritePage() {
+  const { openLoading } = useLoading();
   const { userEmail, accessToken, password } = AccountStateStore;
   const {
     title,
@@ -32,6 +36,7 @@ function WritePage() {
 
   const category = ["ETC", "NOTICE", "FREE", "QNA"];
   const [categoryIdx, setCategoryIdx] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     setCategory(category[categoryIdx]);
@@ -82,6 +87,17 @@ function WritePage() {
       );
 
       console.log(res);
+
+      if (res.status === 201) {
+        console.log(res);
+        setTitle("");
+        setContent("");
+        setCategory("");
+
+        router.push("/boards");
+        openLoading();
+        document.body.classList.add("whiteDim");
+      }
     } catch (e: any) {
       console.error(e.response);
     }
@@ -89,6 +105,7 @@ function WritePage() {
 
   return (
     <form onSubmit={onSubmit}>
+      <RedirectComp />
       <WriteInputsWrapper>
         <WriteInputWrapper
           type="text"

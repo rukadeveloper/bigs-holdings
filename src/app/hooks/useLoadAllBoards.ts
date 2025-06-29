@@ -11,7 +11,7 @@ type Board = {
   isChecked: boolean;
 };
 
-const useLoadAllBoards = (flag: boolean) => {
+const useLoadAllBoards = (flag: boolean, reRender: boolean) => {
   const size = 10;
 
   const {
@@ -23,7 +23,10 @@ const useLoadAllBoards = (flag: boolean) => {
   } = BoardStore;
 
   useEffect(() => {
-    if (flag) {
+    reRender = false;
+    reRender = true;
+    if (flag || reRender) {
+      console.log("all 실행");
       const imported = sessionStorage.getItem("my-account");
       let parsed = null;
       const tempData: Board[] = [];
@@ -34,7 +37,8 @@ const useLoadAllBoards = (flag: boolean) => {
 
       const fetchAllPages = async (
         currentPage: number,
-        tempData: Board[] = []
+        tempData: Board[] = [],
+        totalPagesFromServer?: number
       ): Promise<Board[]> => {
         try {
           const res = await axios.get(
@@ -46,6 +50,7 @@ const useLoadAllBoards = (flag: boolean) => {
             }
           );
 
+          const totalPagesServer = totalPagesFromServer ?? res.data.totalPages;
           if (currentPage === 0) {
             changeTotalPages(res.data.totalPages);
           }
@@ -56,7 +61,7 @@ const useLoadAllBoards = (flag: boolean) => {
           }));
           tempData.push(...newData);
 
-          if (currentPage < totalPages - 1) {
+          if (currentPage < totalPagesServer - 1) {
             return fetchAllPages(currentPage + 1, tempData);
           } else {
             return tempData;
@@ -68,11 +73,12 @@ const useLoadAllBoards = (flag: boolean) => {
       };
 
       fetchAllPages(0).then((allData) => {
+        console.log(allData);
         changeAllFilteredData(allData);
         changeAllOriginalData(allData);
       });
     }
-  }, [flag]);
+  }, []);
 };
 
 export default useLoadAllBoards;

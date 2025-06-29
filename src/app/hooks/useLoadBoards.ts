@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import BoardStore from "../store/BoardStore";
+import { observer } from "mobx-react-lite";
+import { observable, toJS } from "mobx";
 
 type Board = {
   id: number;
@@ -10,7 +12,7 @@ type Board = {
   isChecked: boolean;
 };
 
-const useLoadBoards = (flag: boolean) => {
+const useLoadBoards = (flag: boolean, reRender: boolean) => {
   const [size] = useState(10);
 
   const {
@@ -22,8 +24,11 @@ const useLoadBoards = (flag: boolean) => {
   } = BoardStore;
 
   useEffect(() => {
-    const importedData = sessionStorage.getItem("my-account");
     const mappingData: Board[] = [];
+    const importedData = sessionStorage.getItem("my-account");
+
+    reRender = false;
+    reRender = true;
 
     if (importedData) {
       const parsedData = JSON.parse(importedData);
@@ -46,16 +51,21 @@ const useLoadBoards = (flag: boolean) => {
             changeBoardData(mappingData);
             changeTotalPages(response.data.totalPages);
             changeTotalElements(response.data.totalElements);
-            console.log(boardData);
           }
-        } catch (e) {}
+        } catch (e) {
+          console.error(e);
+        }
       };
 
-      if (flag) {
+      if (flag || reRender) {
         axiosBoard();
       }
     }
-  }, [page, flag]);
+  }, [page, flag, reRender]);
+
+  useEffect(() => {
+    console.log(toJS(observable(boardData)));
+  }, [boardData]);
 };
 
 export default useLoadBoards;
